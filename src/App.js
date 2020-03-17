@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom'
+import { Switch, Route, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
 
 import './App.css';
@@ -52,8 +52,9 @@ class App extends React.Component {
             component={ShopPage}
           />
           <Route
+            exact
             path='/signin'
-            component={SignInAndSignUpPage}
+            render={()=>this.props.currentUser ? <Redirect to='/'/> : <SignInAndSignUpPage/>}
           />
         </Switch>
       </div>
@@ -62,14 +63,15 @@ class App extends React.Component {
 
 }
 
+const mapStateToProps = ({ user }) => ({
+  currentUser: user.currentUser
+})
+
 const mapDispatchToProps = dispatch => ({
   setCurrentUser: user => dispatch(setCurrentUser(user))
 })
 
-//null passed in for first argument which would have been mapStateToProps bc this component
-// doesn't need to know anything about the the app's state
-//it just needs to be able to make adjustments to it
 export default connect(
-  null, 
+  mapStateToProps, 
   mapDispatchToProps
   )(App);
